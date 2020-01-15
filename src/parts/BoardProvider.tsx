@@ -36,6 +36,33 @@ interface BoardAction {
   overrideProgram: (program: Program) => void;
 }
 
+type Internal<S, A extends { [P in keyof A]: (...args: any) => any }> = {
+  [P in keyof A]: (...args: Parameters<A[P]>) => S | null | undefined | Promise<S>;
+};
+type BoardActionInternal = Internal<BoardState, BoardAction>;
+
+function create(setState: (state: BoardState) => void, obj: BoardActionInternal): BoardAction {
+  const result: any = {};
+  Object.entries(obj).forEach(([name, method]) => {
+    result[name] = (...argument: any[]) => {
+      const state = (method as any)(...argument);
+      if (!state) {
+        return;
+      }
+      if (state instanceof Promise) {
+        state.then(state => {
+          if (state) {
+            setState({ ...state });
+          }
+        });
+        return;
+      }
+      setState({ ...state });
+    };
+  });
+  return result;
+}
+
 // [[{"type":"scanAttack","next":"downright","branch":"right","direction":0,"angle":90,"range":100},{"type":"back","next":"right"},{"type":"descent","next":"up"},null],[{"type":"ascent","next":"left"},{"type":"altitude","next":"down","branch":"left","greaterOrLess":"less","value":100},null,null],[{"type":"turn","next":"left"},{"type":"scanEnemy","next":"left","branch":"down","direction":0,"angle":180,"range":1000},{"type":"random","next":"right","branch":"downright","greaterOrLess":"greater","value":5},{"type":"fireLaser","next":"right","direction":0,"force":8}],[{"type":"ahead","next":"down"},{"type":"scanEnemy","next":"left","branch":"right","direction":0,"angle":60,"range":200},{"type":"temperature","next":"down","branch":"up","greaterOrLess":"less","value":80},{"type":"fireMissile","next":"down"}]]
 const defaultValue: BoardState = {
   main: [],
@@ -102,15 +129,15 @@ export const BoardProvider = ({ length, children }: { length: number; children: 
     return { ...state, targetPosition, editingChip };
   };
 
-  const actions: BoardAction = {
+  const actions: BoardActionInternal = {
     setTargetProgram: targetProgram => {
       const newState = applyEdtingChip(state);
-      setState({ ...newState, targetProgram });
+      return { ...newState, targetProgram };
     },
     drag: targetPosition => {
       const newState = applyEdtingChip(state);
       log('state change @ drag');
-      setState({ ...newState, editingChip: null, targetPosition });
+      return { ...newState, editingChip: null, targetPosition };
     },
     drop: (dropPosition: Xy) => {
       if (targetPosition === null) {
@@ -133,26 +160,26 @@ export const BoardProvider = ({ length, children }: { length: number; children: 
       program[dropPosition.y][dropPosition.x] = chip;
       const newState = startEditing(state, dropPosition);
       log('state change @ accept drop');
-      setState({ ...newState });
+      return newState;
     },
     startEditing: targetPosition => {
       let newState = applyEdtingChip(state);
       newState = startEditing(newState, targetPosition);
       log('state change @ startEditing');
-      setState({ ...newState });
+      return newState;
     },
     updateEditingChip: chip => {
       log('state change @ updateEditingChip');
-      setState({ ...state, editingChip: { ...chip } });
+      return { ...state, editingChip: { ...chip } };
     },
     finishEditing: () => {
       const newState = applyEdtingChip(state);
       log('state change @ finishEditing');
-      setState({ ...newState });
+      return newState;
     },
     cancel: () => {
       log('state change @ cancel');
-      setState({ ...state, editingChip: null, targetPosition: null });
+      return { ...state, editingChip: null, targetPosition: null };
     },
     delete: () => {
       if (targetPosition === null) {
@@ -161,7 +188,7 @@ export const BoardProvider = ({ length, children }: { length: number; children: 
       const program = targetProgram === ProgramType.MAIN ? main : missile;
       program[targetPosition.y][targetPosition.x] = null;
       log('state change @ delete');
-      setState({ ...state, editingChip: null, targetPosition: null });
+      return { ...state, editingChip: null, targetPosition: null };
     },
     overrideProgram: program => {
       if (targetProgram === ProgramType.MAIN) {
@@ -169,9 +196,11 @@ export const BoardProvider = ({ length, children }: { length: number; children: 
       } else {
         state.missile = program;
       }
-      setState({ ...state });
+      return state;
     }
   };
 
-  return <BoardContext.Provider value={{ state, actions }}>{children}</BoardContext.Provider>;
+  return (
+    <BoardContext.Provider value={{ state, actions: create(setState, actions) }}>{children}</BoardContext.Provider>
+  );
 };
