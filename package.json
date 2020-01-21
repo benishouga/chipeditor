@@ -4,35 +4,25 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "webpack-dev-server --hot --watch-content-base --content-base docs/ --open ",
+    "compile": "tsc",
+    "build": "webpack --mode=development",
+    "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@types/jest": "^24.0.9",
     "@types/node": "^11.12.0",
     "@types/react": "^16.9.13",
     "@types/react-dom": "^16.9.4",
-    "babel-jest": "23.6.0",
-    "faker": "^4.1.0",
-    "immutability-helper": "^3.0.0",
+    "prettier": "^1.19.1",
     "react": "16.8.4",
     "react-dnd": "10.0.2",
     "react-dnd-html5-backend": "10.0.2",
     "react-dom": "16.8.4",
-    "react-frame-component": "^4.1.0",
-    "react-scripts": "2.1.8",
     "tiny-context": "git+https://github.com/benishouga/tiny-context.git",
-    "typescript": "^3.7.2"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "devDependencies": {
-    "prettier": "^1.19.1"
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   }
 }
