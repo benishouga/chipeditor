@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useDrop } from 'react-dnd';
-import { BoardContext } from './BoardProvider';
+import { useBoardContext } from './BoardProvider';
 import { Xy } from './Xy';
 import { Chip } from './Chip';
 import { ProgramType } from './ProgramType';
@@ -9,7 +9,7 @@ export function ChipSocket({ position, size }: { position: Xy; size: number }) {
   const {
     state: { main, missile, targetPosition, editingChip, targetProgram },
     actions: { drop: actionDrop, startEditing }
-  } = useContext(BoardContext);
+  } = useBoardContext();
 
   const isTarget =
     editingChip && targetPosition !== null && targetPosition.x === position.x && targetPosition.y === position.y;

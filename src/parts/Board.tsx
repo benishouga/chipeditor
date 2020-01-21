@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { BoardContext } from './BoardProvider';
+import React from 'react';
+import { useBoardContext } from './BoardProvider';
 import { ChipSocket } from './ChipSocket';
 import { ProgramType } from './ProgramType';
 
@@ -9,7 +9,7 @@ export function Board() {
   const {
     state: { length, targetProgram, main, missile },
     actions: { overrideProgram }
-  } = useContext(BoardContext);
+  } = useBoardContext();
 
   const size = EDITOR_SIZE / length;
   const chips = [];

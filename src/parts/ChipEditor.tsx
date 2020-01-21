@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { BoardContext } from './BoardProvider';
+import React from 'react';
+import { useBoardContext } from './BoardProvider';
 import { selectChipUi } from './Chips';
 import { MainChipType, MainChipTypeValues } from './ChipType';
 import { Direction, DirectionValues } from './Direction';
 
 export function ChipEditor() {
-  const context = useContext(BoardContext);
+  const context = useBoardContext();
 
   const state = context.state;
   const { editingChip } = state;

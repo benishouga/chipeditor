@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useDrag } from 'react-dnd';
-import { BoardContext } from './BoardProvider';
+import { useBoardContext } from './BoardProvider';
 import { Xy } from './Xy';
 import { selectChipUi } from './Chips';
 import { ProgramType } from './ProgramType';
@@ -25,11 +25,13 @@ export function Chip({ position }: { position: Xy }) {
   const {
     state: { main, missile, targetPosition, editingChip, targetProgram },
     actions: { startEditing, drag: actionDrag }
-  } = useContext(BoardContext);
+  } = useBoardContext();
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: 'CHIP_SOCKET' },
-    begin: () => actionDrag(position),
+    begin: () => {
+      actionDrag(position);
+    },
     collect: monitor => ({ isDragging: !!monitor.isDragging() })
   });
 

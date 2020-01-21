@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { BoardContext } from './BoardProvider';
+import React from 'react';
+import { useBoardContext } from './BoardProvider';
 import { ProgramType } from './ProgramType';
 
 export function ProgramSelector() {
   const {
     state: { targetProgram },
     actions: { setTargetProgram }
-  } = useContext(BoardContext);
+  } = useBoardContext();
 
   return (
     <div>

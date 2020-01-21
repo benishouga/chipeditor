@@ -1,14 +1,14 @@
-import React, { useContext, useMemo } from 'react';
-import { BoardContext } from './BoardProvider';
-import { LogContext } from './LogProvider';
+import React, { useMemo } from 'react';
+import { useBoardContext } from './BoardProvider';
+import { useLogContext } from './LogProvider';
 
 export function Log({}) {
-  const context = useContext(BoardContext);
+  const context = useBoardContext();
   const state = context.state;
   const {
     state: { log },
     actions: { log: l }
-  } = useContext(LogContext);
+  } = useLogContext();
   useMemo(() => {
     const debug = { ...state };
     const main = debug.main;

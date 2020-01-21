@@ -23,6 +23,7 @@
     "react-dom": "16.8.4",
     "react-frame-component": "^4.1.0",
     "react-scripts": "2.1.8",
+    "tiny-context": "git+https://github.com/benishouga/tiny-context.git",
     "typescript": "^3.7.2"
   },
   "browserslist": [
