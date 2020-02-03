@@ -32315,66 +32315,79 @@ var extract = function (obj, ignores) {
     return Array.from(set);
 };
 var IGNORES = extract({}, []);
+var useRerender = function () {
+    var _a = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0), _ = _a[0], set = _a[1];
+    return { rerender: function () { return set(function (c) { return c + 1; }); } };
+};
+var Queue = /** @class */ (function () {
+    function Queue() {
+        this.q = [];
+    }
+    Queue.prototype.push = function (task) {
+        var free = !this.q.length;
+        this.q.push(task);
+        if (free)
+            this.awake();
+    };
+    Queue.prototype.awake = function () {
+        var _this = this;
+        var next = this.q[0];
+        if (next) {
+            next().finally(function () {
+                _this.q.shift();
+                _this.awake();
+            });
+        }
+    };
+    return Queue;
+}());
 function createTinyContext(internalActions) {
     var _this = this;
     var Context = Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])({});
-    var queue = [];
-    var busy = false;
     var Provider = function (_a) {
         var value = _a.value, children = _a.children;
-        var _b = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(value), state = _b[0], setState = _b[1];
-        var _c = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0), count = _c[0], setCount = _c[1];
-        var wake = function () { return setCount(function (c) { return c + 1; }); };
-        Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-            if (busy)
-                return;
-            busy = true;
-            var next = queue.shift();
-            if (next) {
-                next(__assign({}, state))
-                    .then(next.resolve)
-                    .catch(next.reject)
-                    .finally(function () {
-                    busy = false;
-                    wake();
+        var rerender = useRerender().rerender;
+        var c = Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () { return ({ state: value, queue: new Queue() }); }, []);
+        return Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () {
+            var convertAction = function (actions, action) { return function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                return new Promise(function (resolve, reject) {
+                    var task = function (state) { return __awaiter(_this, void 0, void 0, function () {
+                        var newState;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, action.bind(actions).apply(void 0, __spreadArrays([state], args))];
+                                case 1:
+                                    newState = _a.sent();
+                                    if (newState !== null && newState !== undefined) {
+                                        c.state = __assign({}, newState);
+                                        rerender();
+                                    }
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); };
+                    c.queue.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            task(c.state)
+                                .then(resolve)
+                                .catch(reject);
+                            return [2 /*return*/];
+                        });
+                    }); });
                 });
-            }
-            else {
-                busy = false;
-            }
-        }, [count]);
-        var convertAction = function (actions, action) { return function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            return new Promise(function (resolve, reject) {
-                var task = function (state) { return __awaiter(_this, void 0, void 0, function () {
-                    var newState;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, action.bind(actions).apply(void 0, __spreadArrays([state], args))];
-                            case 1:
-                                newState = _a.sent();
-                                if (newState !== null && newState !== undefined) {
-                                    setState(__assign({}, newState));
-                                }
-                                return [2 /*return*/];
-                        }
-                    });
-                }); };
-                task.resolve = resolve;
-                task.reject = reject;
-                queue.push(task);
-                wake();
-            });
-        }; };
-        var convert = function (actions) {
-            var internal = actions;
-            var external = Object.fromEntries(extract(internal).map(function (name) { return [name, convertAction(actions, internal[name])]; }));
-            return external;
-        };
-        return Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context.Provider, { value: { state: state, actions: convert(internalActions) } }, children); }, [state]);
+            }; };
+            var convert = function (actions) {
+                var internal = actions;
+                var external = {};
+                extract(internal).forEach(function (name) { return (external[name] = convertAction(actions, internal[name])); });
+                return external;
+            };
+            return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context.Provider, { value: { state: c.state, actions: convert(internalActions) } }, children));
+        }, [c.state]);
     };
     return { Provider: Provider, useContext: function () { return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(Context); } };
 }
