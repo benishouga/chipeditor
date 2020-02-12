@@ -10,19 +10,19 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@types/node": "^11.12.0",
-    "@types/react": "^16.9.13",
+    "@types/node": "^13.7.1",
+    "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.4",
     "prettier": "^1.19.1",
-    "react": "16.8.4",
+    "react": "^16.12.0",
     "react-dnd": "10.0.2",
     "react-dnd-html5-backend": "10.0.2",
-    "react-dom": "16.8.4",
-    "tiny-context": "^0.2.0",
+    "react-dom": "^16.12.0",
+    "tiny-context": "^1.0.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
