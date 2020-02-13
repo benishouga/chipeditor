@@ -47,7 +47,7 @@ class BoardAction {
     }
     const program = targetProgram === ProgramType.MAIN ? main : missile;
     program[targetPosition.y][targetPosition.x] = editingChip;
-    return { editingChip: null, targetPosition: null };
+    return { ...state, editingChip: null, targetPosition: null };
   }
   private startEditingInternal(state: BoardState, targetPosition: Xy) {
     const { main, missile, targetProgram } = state;
@@ -72,8 +72,7 @@ class BoardAction {
     const program = targetProgram === ProgramType.MAIN ? main : missile;
     const chip = program[targetPosition.y][targetPosition.x];
     if (program[dropPosition.y][dropPosition.x]) {
-      let newState: BoardState = { ...state, targetPosition: null };
-      newState = this.startEditingInternal(newState, targetPosition);
+      let newState = this.startEditingInternal(state, targetPosition);
       return { ...newState };
     }
     program[targetPosition.y][targetPosition.x] = null;
@@ -85,14 +84,14 @@ class BoardAction {
     let newState = { ...state, ...this.applyEdtingChip(state) };
     return this.startEditingInternal(newState, targetPosition);
   }
-  updateEditingChip(_state: BoardState, chip: Chip) {
-    return { editingChip: { ...chip } };
+  updateEditingChip(state: BoardState, chip: Chip) {
+    return { ...state, editingChip: { ...chip } };
   }
   finishEditing(state: BoardState) {
     return this.applyEdtingChip(state);
   }
-  cancel(_state: BoardState) {
-    return { editingChip: null, targetPosition: null };
+  cancel(state: BoardState) {
+    return { ...state, editingChip: null, targetPosition: null };
   }
   delete(state: BoardState) {
     const { main, missile, targetPosition, targetProgram } = state;

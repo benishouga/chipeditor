@@ -425,7 +425,7 @@ type ChipProps = PropsWithChildren<{ chip: Chip }>;
 type ChipEditorProps = PropsWithChildren<{ chip: Chip; onChipUpdate: (chip: Chip) => void }>;
 
 interface ChipUiFactory {
-  init: (prev?: Chip | null) => Chip;
+  init: (prev?: Chip) => Chip;
   Chip: React.FC<ChipProps>;
   Editor: React.FC<ChipEditorProps>;
 }
@@ -433,38 +433,38 @@ interface ChipUiFactory {
 const factories = new Map<ChipType, ChipUiFactory>();
 
 factories.set(MainChipType.nop, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.nop, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.nop, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="-" />,
   Editor: () => null
 });
 factories.set(MainChipType.ahead, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.ahead, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.ahead, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="➡" description="前進" />,
   Editor: () => null
 });
 factories.set(MainChipType.back, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.back, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.back, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="⬅" description="後退" />,
   Editor: () => null
 });
 factories.set(MainChipType.ascent, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.ascent, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.ascent, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="⤴" description="上昇" />,
   Editor: () => null
 });
 factories.set(MainChipType.descent, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.descent, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.descent, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="⤵" description="下降" />,
   Editor: () => null
 });
 factories.set(MainChipType.turn, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.turn, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.turn, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <SimpleActionChip label="↩" description="ターン" />,
   Editor: () => null
 });
 
 factories.set(MainChipType.wait, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({ type: MainChipType.wait, next: prev ? prev.next : Direction.down, value: 0 } as VariableActionChip),
   Chip: ({ chip }: ChipProps) => <VariableActionChip chip={chip as VariableActionChip} label="⌛" />,
   Editor: ({ chip, onChipUpdate }: ChipEditorProps) => (
@@ -479,7 +479,7 @@ factories.set(MainChipType.wait, {
 });
 
 factories.set(MainChipType.frame, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.frame,
       next: prev ? prev.next : Direction.down,
@@ -493,7 +493,7 @@ factories.set(MainChipType.frame, {
   )
 });
 factories.set(MainChipType.fuel, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.fuel,
       next: prev ? prev.next : Direction.down,
@@ -507,7 +507,7 @@ factories.set(MainChipType.fuel, {
   )
 });
 factories.set(MainChipType.altitude, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.altitude,
       next: prev ? prev.next : Direction.down,
@@ -521,7 +521,7 @@ factories.set(MainChipType.altitude, {
   )
 });
 factories.set(MainChipType.shield, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.shield,
       next: prev ? prev.next : Direction.down,
@@ -535,7 +535,7 @@ factories.set(MainChipType.shield, {
   )
 });
 factories.set(MainChipType.temperature, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.temperature,
       next: prev ? prev.next : Direction.down,
@@ -549,7 +549,7 @@ factories.set(MainChipType.temperature, {
   )
 });
 factories.set(MainChipType.missileAmmo, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.missileAmmo,
       next: prev ? prev.next : Direction.down,
@@ -564,7 +564,7 @@ factories.set(MainChipType.missileAmmo, {
 });
 
 factories.set(MainChipType.random, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.random,
       next: prev ? prev.next : Direction.down,
@@ -578,7 +578,7 @@ factories.set(MainChipType.random, {
   )
 });
 factories.set(MainChipType.scanEnemy, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.scanEnemy,
       next: prev ? prev.next : Direction.down,
@@ -593,7 +593,7 @@ factories.set(MainChipType.scanEnemy, {
   )
 });
 factories.set(MainChipType.scanAttack, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.scanAttack,
       next: prev ? prev.next : Direction.down,
@@ -609,7 +609,7 @@ factories.set(MainChipType.scanAttack, {
 });
 
 factories.set(MainChipType.fireLaser, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.fireLaser,
       next: prev ? prev.next : Direction.down,
@@ -623,13 +623,13 @@ factories.set(MainChipType.fireLaser, {
 });
 
 factories.set(MainChipType.fireMissile, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.fireMissile, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.fireMissile, next: prev ? prev.next : Direction.down }),
   Chip: ({}: ChipProps) => <FireMissileChip />,
   Editor: () => null
 });
 
 factories.set(MainChipType.log, {
-  init: (prev?: Chip | null) => ({ type: MainChipType.log, next: prev ? prev.next : Direction.down }),
+  init: (prev?: Chip) => ({ type: MainChipType.log, next: prev ? prev.next : Direction.down }),
   Chip: ({ chip }: ChipProps) => <LogChip chip={chip as LogChip} />,
   Editor: ({ chip, onChipUpdate }: ChipEditorProps) => (
     <LogChipEditor chip={chip as LogChip} onChipUpdate={onChipUpdate} />
@@ -637,7 +637,7 @@ factories.set(MainChipType.log, {
 });
 
 factories.set(MainChipType.scanDebug, {
-  init: (prev?: Chip | null) =>
+  init: (prev?: Chip) =>
     ({
       type: MainChipType.scanDebug,
       next: prev ? prev.next : Direction.down,

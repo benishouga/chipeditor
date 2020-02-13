@@ -39535,7 +39535,7 @@ function createStore(value, onChanged, actions) {
     var queue = new Queue();
     var feed = function (newState) {
         if (newState !== null && newState !== undefined) {
-            state = __assign(__assign({}, state), newState);
+            state = __assign({}, newState);
             onChanged(state);
         }
     };
@@ -39873,7 +39873,7 @@ var BoardAction = /** @class */ (function () {
         }
         var program = targetProgram === _ProgramType__WEBPACK_IMPORTED_MODULE_2__["ProgramType"].MAIN ? main : missile;
         program[targetPosition.y][targetPosition.x] = editingChip;
-        return { editingChip: null, targetPosition: null };
+        return __assign(__assign({}, state), { editingChip: null, targetPosition: null });
     };
     BoardAction.prototype.startEditingInternal = function (state, targetPosition) {
         var main = state.main, missile = state.missile, targetProgram = state.targetProgram;
@@ -39898,8 +39898,7 @@ var BoardAction = /** @class */ (function () {
         var program = targetProgram === _ProgramType__WEBPACK_IMPORTED_MODULE_2__["ProgramType"].MAIN ? main : missile;
         var chip = program[targetPosition.y][targetPosition.x];
         if (program[dropPosition.y][dropPosition.x]) {
-            var newState_1 = __assign(__assign({}, state), { targetPosition: null });
-            newState_1 = this.startEditingInternal(newState_1, targetPosition);
+            var newState_1 = this.startEditingInternal(state, targetPosition);
             return __assign({}, newState_1);
         }
         program[targetPosition.y][targetPosition.x] = null;
@@ -39911,14 +39910,14 @@ var BoardAction = /** @class */ (function () {
         var newState = __assign(__assign({}, state), this.applyEdtingChip(state));
         return this.startEditingInternal(newState, targetPosition);
     };
-    BoardAction.prototype.updateEditingChip = function (_state, chip) {
-        return { editingChip: __assign({}, chip) };
+    BoardAction.prototype.updateEditingChip = function (state, chip) {
+        return __assign(__assign({}, state), { editingChip: __assign({}, chip) });
     };
     BoardAction.prototype.finishEditing = function (state) {
         return this.applyEdtingChip(state);
     };
-    BoardAction.prototype.cancel = function (_state) {
-        return { editingChip: null, targetPosition: null };
+    BoardAction.prototype.cancel = function (state) {
+        return __assign(__assign({}, state), { editingChip: null, targetPosition: null });
     };
     BoardAction.prototype.delete = function (state) {
         var main = state.main, missile = state.missile, targetPosition = state.targetPosition, targetProgram = state.targetProgram;
@@ -40079,13 +40078,10 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 function ChipEditor() {
-    var context = Object(_BoardProvider__WEBPACK_IMPORTED_MODULE_1__["useBoardContext"])();
-    var state = context.state;
-    var editingChip = state.editingChip;
+    var _a = Object(_BoardProvider__WEBPACK_IMPORTED_MODULE_1__["useBoardContext"])(), editingChip = _a.state.editingChip, _b = _a.actions, updateEditingChip = _b.updateEditingChip, finishEditing = _b.finishEditing, cancel = _b.cancel, del = _b.delete;
     if (!editingChip) {
         return null;
     }
-    var _a = context.actions, updateEditingChip = _a.updateEditingChip, finishEditing = _a.finishEditing, cancel = _a.cancel, del = _a.delete;
     var typeHandler = function (type) { return function () {
         var factory = Object(_Chips__WEBPACK_IMPORTED_MODULE_2__["selectChipUi"])(type);
         var f = factory.init(editingChip);
@@ -40097,6 +40093,15 @@ function ChipEditor() {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null,
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, _ChipType__WEBPACK_IMPORTED_MODULE_3__["MainChipTypeValues"].map(function (v) { return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", { key: v, onClick: typeHandler(v) }, v)); })),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, _Direction__WEBPACK_IMPORTED_MODULE_4__["DirectionValues"].map(function (v) { return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", { key: v, onClick: nextHandler(v) }, v)); })),
+        chipUi && editingChip ? (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { style: {
+                height: '80px',
+                width: '80px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative'
+            } },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(chipUi.Chip, { chip: editingChip }))) : null,
         chipUi && editingChip ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(chipUi.Editor, { chip: editingChip, onChipUpdate: updateEditingChip }) : null,
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", { onClick: function () { return finishEditing(); } }, "finish"),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", { onClick: function () { return cancel(); } }, "cancel"),

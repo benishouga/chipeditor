@@ -1,18 +1,18 @@
-import React from 'react';
-import { useBoardContext } from './BoardProvider';
+import React, { PropsWithChildren } from 'react';
+import { useBoardContext, Chip } from './BoardProvider';
 import { selectChipUi } from './Chips';
 import { MainChipType, MainChipTypeValues } from './ChipType';
 import { Direction, DirectionValues } from './Direction';
 
 export function ChipEditor() {
-  const context = useBoardContext();
+  const {
+    state: { editingChip },
+    actions: { updateEditingChip, finishEditing, cancel, delete: del }
+  } = useBoardContext();
 
-  const state = context.state;
-  const { editingChip } = state;
   if (!editingChip) {
     return null;
   }
-  const { updateEditingChip, finishEditing, cancel, delete: del } = context.actions;
 
   const typeHandler = (type: MainChipType) => () => {
     const factory = selectChipUi(type);
@@ -21,7 +21,6 @@ export function ChipEditor() {
     return updateEditingChip({ ...f });
   };
   const nextHandler = (next: Direction) => () => editingChip && updateEditingChip({ ...editingChip, next });
-
   const chipUi = editingChip ? selectChipUi(editingChip.type) : null;
 
   return (
@@ -40,6 +39,20 @@ export function ChipEditor() {
           </button>
         ))}
       </p>
+      {chipUi && editingChip ? (
+        <div
+          style={{
+            height: '80px',
+            width: '80px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative'
+          }}
+        >
+          <chipUi.Chip chip={editingChip} />
+        </div>
+      ) : null}
       {chipUi && editingChip ? <chipUi.Editor chip={editingChip} onChipUpdate={updateEditingChip} /> : null}
       <button onClick={() => finishEditing()}>finish</button>
       <button onClick={() => cancel()}>cancel</button>
