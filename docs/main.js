@@ -39421,10 +39421,10 @@ function symbolObservablePonyfill(root) {
 
 /***/ }),
 
-/***/ "./node_modules/tiny-context/dist/tiny-context.js":
-/*!********************************************************!*\
-  !*** ./node_modules/tiny-context/dist/tiny-context.js ***!
-  \********************************************************/
+/***/ "./node_modules/tiny-context/es/tiny-context.js":
+/*!******************************************************!*\
+  !*** ./node_modules/tiny-context/es/tiny-context.js ***!
+  \******************************************************/
 /*! exports provided: createStore, createTinyContext */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -39434,27 +39434,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createTinyContext", function() { return createTinyContext; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-var __assign = (undefined && undefined.__assign) || function () {
-    __assign = Object.assign || function(t) {
+
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
     };
     return __assign.apply(this, arguments);
 };
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+
+function __awaiter(thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+}
+
+function __generator(thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
@@ -39480,14 +39497,15 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
-};
-var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+}
+
+function __spreadArrays() {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
             r[k] = a[j];
     return r;
-};
+}
 
 function isGenerator(obj) {
     return obj && typeof obj.next === 'function' && typeof obj.throw === 'function' && typeof obj.return === 'function';
@@ -39529,7 +39547,7 @@ var useRerender = function () {
     var _a = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0), _ = _a[0], set = _a[1];
     return { rerender: function () { return set(function (c) { return c + 1; }); } };
 };
-function createStore(value, onChanged, actions) {
+function createStore(value, onChanged, impl) {
     var _this = this;
     var state = value;
     var queue = new Queue();
@@ -39545,16 +39563,17 @@ function createStore(value, onChanged, actions) {
             args[_i] = arguments[_i];
         }
         var task = function () { return __awaiter(_this, void 0, void 0, function () {
-            var result, next, _a;
+            var result, isContinue, next, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, action.bind(actions).apply(void 0, __spreadArrays([state], args))];
+                    case 0: return [4 /*yield*/, action.bind(impl).apply(void 0, __spreadArrays([state], args))];
                     case 1:
                         result = _b.sent();
                         if (!isGenerator(result)) return [3 /*break*/, 6];
+                        isContinue = true;
                         _b.label = 2;
                     case 2:
-                        if (false) {}
+                        if (!isContinue) return [3 /*break*/, 5];
                         return [4 /*yield*/, result.next(state)];
                     case 3:
                         next = _b.sent();
@@ -39562,8 +39581,7 @@ function createStore(value, onChanged, actions) {
                         return [4 /*yield*/, next.value];
                     case 4:
                         _a.apply(void 0, [_b.sent()]);
-                        if (next.done)
-                            return [3 /*break*/, 5];
+                        isContinue = !next.done;
                         return [3 /*break*/, 2];
                     case 5: return [3 /*break*/, 7];
                     case 6:
@@ -39574,7 +39592,7 @@ function createStore(value, onChanged, actions) {
             });
         }); };
         return new Promise(function (resolve, reject) {
-            queue.push(function () { return __awaiter(_this, void 0, void 0, function () {
+            return queue.push(function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, task()
@@ -39590,31 +39608,28 @@ function createStore(value, onChanged, actions) {
     }; };
     var convert = function () {
         var external = {};
-        extract(actions).forEach(function (name) { return (external[name] = convertAction(actions[name])); });
+        extract(impl).forEach(function (name) { return (external[name] = convertAction(impl[name])); });
         return external;
     };
-    return function () { return ({ state: state, actions: convert() }); };
+    var actions = convert();
+    return function () { return ({ state: state, actions: actions }); };
 }
 function _createTinyContext(impl) {
     if (impl) {
-        return createTinyContext().actions(impl);
+        var Context_1 = Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])({});
+        var Provider = function (_a) {
+            var value = _a.value, _b = _a.children, children = _b === void 0 ? null : _b;
+            var rerender = useRerender().rerender;
+            var _c = Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () { return createStore(value, rerender, impl); }, [])(), state = _c.state, actions = _c.actions;
+            return Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context_1.Provider, { value: { state: state, actions: actions } }, children); }, [state]);
+        };
+        return { Provider: Provider, useContext: function () { return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(Context_1); } };
     }
-    return {
-        actions: function (implementation) {
-            var Context = Object(react__WEBPACK_IMPORTED_MODULE_0__["createContext"])({});
-            var Provider = function (_a) {
-                var value = _a.value, _b = _a.children, children = _b === void 0 ? null : _b;
-                var rerender = useRerender().rerender;
-                var _c = Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () { return createStore(value, rerender, implementation); }, [])(), state = _c.state, actions = _c.actions;
-                return Object(react__WEBPACK_IMPORTED_MODULE_0__["useMemo"])(function () {
-                    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Context.Provider, { value: { state: state, actions: actions } }, children);
-                }, [state]);
-            };
-            return { Provider: Provider, useContext: function () { return Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(Context); } };
-        }
-    };
+    return { actions: function (impl) { return createTinyContext(impl); } };
 }
 var createTinyContext = _createTinyContext;
+
+
 
 
 /***/ }),
@@ -39836,7 +39851,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BoardProvider", function() { return BoardProvider; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var tiny_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-context */ "./node_modules/tiny-context/dist/tiny-context.js");
+/* harmony import */ var tiny_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-context */ "./node_modules/tiny-context/es/tiny-context.js");
 /* harmony import */ var _ProgramType__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProgramType */ "./src/parts/ProgramType.ts");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -40807,7 +40822,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LogProvider", function() { return LogProvider; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var tiny_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-context */ "./node_modules/tiny-context/dist/tiny-context.js");
+/* harmony import */ var tiny_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-context */ "./node_modules/tiny-context/es/tiny-context.js");
 
 
 var _a = Object(tiny_context__WEBPACK_IMPORTED_MODULE_1__["createTinyContext"])().actions({
